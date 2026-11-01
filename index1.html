@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F1F2F4">
+<title>關西九日行程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F2F4; --card:#FFFFFF; --ink:#1C2333; --muted:#646B7A; --rule:#D6D9E0;
+  --indigo:#2B3A67; --rail:#3A55A8; --bus:#2F7A55; --walk:#8A909C; --taxi:#B8720E; --air:#7A6AA8;
+  --warn:#A8650A; --warn-bg:#FBEFD9; --todo-bg:#E8ECF7; --done:#2F7A55;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11151D; --card:#1A202B; --ink:#E5E8EF; --muted:#9AA1B0; --rule:#2D3443;
+    --indigo:#A9B9EE; --rail:#7D98E6; --bus:#62C292; --walk:#7C8394; --taxi:#E5A84E; --air:#B3A5E0;
+    --warn:#E5A84E; --warn-bg:#2E2414; --todo-bg:#1F2740; --done:#62C292; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11151D; --card:#1A202B; --ink:#E5E8EF; --muted:#9AA1B0; --rule:#2D3443;
+  --indigo:#A9B9EE; --rail:#7D98E6; --bus:#62C292; --walk:#7C8394; --taxi:#E5A84E; --air:#B3A5E0;
+  --warn:#E5A84E; --warn-bg:#2E2414; --todo-bg:#1F2740; --done:#62C292; color-scheme:dark;
+}
+html,body{height:100%;}
+*,*::before,*::after{box-sizing:inherit;}
+body{margin:0;background:var(--paper);color:var(--ink);-webkit-text-size-adjust:100%;
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",sans-serif;font-size:16px;line-height:1.65;}
+a{color:var(--indigo);text-underline-offset:3px;}
+button{font:inherit;color:inherit;}
+:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;border-radius:6px;}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px;}
+
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper);}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--rule);}
+.top .bar{display:flex;align-items:center;justify-content:space-between;padding-top:10px;}
+.top h1{font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;font-size:1.15rem;margin:0;}
+.top .today{font-size:.82rem;color:var(--muted);}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 0 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{display:none;}
+.tabs a{flex:0 0 auto;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--rule);
+  border-radius:12px;padding:6px 12px;text-align:center;line-height:1.2;min-width:58px;}
+.tabs a b{display:block;font-size:.95rem;}
+.tabs a small{font-size:.74rem;color:var(--muted);}
+.tabs a[aria-current="page"]{background:var(--indigo);border-color:var(--indigo);color:var(--paper);}
+.tabs a[aria-current="page"] small{color:var(--paper);opacity:.8;}
+.tabs a.is-today b::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--taxi);margin-left:4px;vertical-align:middle;}
+
+.view{padding-top:22px;padding-bottom:60px;}
+.day-head{margin-bottom:16px;}
+.day-head .date{color:var(--muted);font-size:.92rem;}
+.day-head h2{font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;font-size:clamp(1.7rem,7vw,2.2rem);line-height:1.2;margin:2px 0 0;}
+.day-head .links{margin-top:6px;font-size:.9rem;display:flex;gap:14px;flex-wrap:wrap;}
+
+.hotel{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin:0 0 18px;}
+.hotel .lbl{font-size:.8rem;color:var(--muted);}
+.hotel .name{font-weight:700;}
+.hotel .addr{font-size:.92rem;margin-top:2px;word-break:break-all;}
+.hotel .addr.missing{color:var(--warn);}
+.btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 14px;border-radius:10px;
+  border:1px solid var(--rule);background:var(--paper);text-decoration:none;color:var(--ink);font-size:.9rem;font-weight:500;cursor:pointer;}
+.btn.primary{background:var(--indigo);border-color:var(--indigo);color:var(--paper);}
+
+ol.line{list-style:none;margin:0;padding:0;}
+ol.line > li{position:relative;padding-left:30px;}
+ol.line > li::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--rule);}
+ol.line > li:first-child::before{top:14px;}
+ol.line > li:last-child::before{bottom:calc(100% - 14px);}
+
+li.stop{padding:5px 0;}
+li.stop::after{content:"";position:absolute;left:4px;top:11px;width:14px;height:14px;border-radius:50%;background:var(--card);border:3px solid var(--ink);}
+li.stop.minor::after{left:7px;top:14px;width:8px;height:8px;border-width:2px;border-color:var(--muted);}
+li.stop .t{font-variant-numeric:tabular-nums;font-weight:700;margin-right:8px;}
+li.stop .n{font-weight:700;}
+li.stop.minor .n{font-weight:400;}
+li.stop .sub{display:block;font-size:.88rem;color:var(--muted);}
+
+li.leg{padding:6px 0 10px;}
+li.leg::before{width:6px !important;left:8px !important;border-radius:3px;background:var(--m) !important;}
+li.leg.walk::before{background:repeating-linear-gradient(var(--walk) 0 6px,transparent 6px 11px) !important;}
+.leg-card{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--m);border-radius:12px;padding:12px 14px;}
+.mode{display:inline-block;font-size:.75rem;font-weight:700;color:var(--m);margin-bottom:2px;}
+.leg-route{font-weight:700;line-height:1.4;}
+.leg-via{font-size:.88rem;color:var(--muted);}
+.leg-meta{display:flex;flex-wrap:wrap;gap:2px 16px;font-size:.92rem;margin-top:6px;font-variant-numeric:tabular-nums;}
+.leg-meta span{color:var(--muted);}
+.leg-meta b{color:var(--ink);font-weight:700;}
+.steps{margin:8px 0 0;padding-left:1.2em;font-size:.9rem;}
+.steps li{margin:2px 0;}
+.warn{margin:8px 0 0;font-size:.88rem;background:var(--warn-bg);color:var(--ink);border-radius:8px;padding:6px 10px;}
+.warn::before{content:"注意　";color:var(--warn);font-weight:700;}
+.leg-card .btns{margin-top:10px;}
+
+li.todo{padding:6px 0;}
+li.todo::after{content:"";position:absolute;left:5px;top:16px;width:12px;height:12px;border-radius:3px;background:var(--taxi);transform:rotate(45deg);}
+label.check{display:flex;gap:10px;align-items:flex-start;background:var(--todo-bg);border-radius:12px;padding:10px 12px;cursor:pointer;}
+label.check input{width:22px;height:22px;margin:1px 0 0;flex:0 0 auto;accent-color:var(--done);}
+label.check span{font-size:.94rem;font-weight:500;}
+label.check span em{display:block;font-style:normal;font-weight:400;font-size:.85rem;color:var(--muted);}
+label.check.hl{outline:2px solid var(--taxi);}
+label.check:has(input:checked) span{color:var(--muted);text-decoration:line-through;}
+
+.stay-list .hotel{margin-bottom:12px;}
+.stay-list .nights{font-size:.85rem;color:var(--muted);}
+.pager{display:flex;justify-content:space-between;margin-top:28px;gap:10px;}
+.pager a{flex:1;text-align:center;}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);
+  padding:8px 16px;border-radius:999px;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+.toast.show{opacity:1;}
+footer{color:var(--muted);font-size:.8rem;padding:0 0 40px;}
+@media (prefers-reduced-motion: reduce){.toast{transition:none;}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="wrap">
+    <div class="bar"><h1>關西九日行程</h1><span class="today" id="todayLbl"></span></div>
+    <nav class="tabs" id="tabs" aria-label="選擇日期"></nav>
+  </div>
+</div>
+<main class="wrap view" id="view" tabindex="-1"></main>
+<footer class="wrap">票價與班次依 2026 年 6 月前資料，以各交通公司官網與 Google 地圖為準。勾選的提醒只存在這支手機的瀏覽器裡。</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var H = {
+  kyoto:{name:"心RESI", jp:"京都府京都市下京区飴屋町253", addr:"〒600-8148 京都府京都市下京区飴屋町253", q:"京都府京都市下京区飴屋町253", nights:"11/3–11/6　3 晚"},
+  bay:{name:"ART 大阪灣飯店（アートホテル大阪ベイ）", jp:"〒552-0007 大阪府大阪市港区弁天1-2-1", addr:"〒552-0007 大阪府大阪市港区弁天1-2-1", q:"大阪府大阪市港区弁天1-2-1 アートホテル大阪ベイ", nights:"11/6–11/8　2 晚"},
+  honmachi:{name:"東急 Stay 大阪本町 御堂筋心齋橋", jp:"〒541-0056 大阪府大阪市中央区久太郎町2-4-24", addr:"〒541-0056 大阪府大阪市中央区久太郎町2-4-24", q:"大阪府大阪市中央区久太郎町2-4-24", nights:"11/8–11/11　3 晚"}
+};
+
+function gm(o,d,mode,way){
+  var u="https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(o)+"&destination="+encodeURIComponent(d)+"&travelmode="+(mode||"transit");
+  if(way) u+="&waypoints="+encodeURIComponent(way.join("|"));
+  return u;
+}
+function gq(q){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);}
+
+var MODES={rail:["電車","--rail"],bus:["巴士","--bus"],walk:["步行","--walk"],taxi:["計程車","--taxi"],air:["飛機","--air"]};
+
+var DAYS=[
+{id:"d1",date:"2026-11-03",md:"11/3",wd:"二",title:"抵達、臨空城、京都",hotel:"kyoto",items:[
+ {s:"stop",t:"06:55",n:"高雄出發"},
+ {s:"leg",m:"air",r:"高雄 → 關西機場",meta:[["抵達","10:40"]]},
+ {s:"stop",t:"10:40",n:"關西機場"},
+ {s:"leg",m:"bus",r:"關西機場 → 臨空城",via:"機場直達巴士，第 1 航廈 1F ⑫ 乘車處",meta:[["班次","11:30 或 12:45"],["票價","¥300"],["車程","15 分"]],
+  links:[["時刻表","https://www.kate.co.jp/tcn/timetable/detail/SKYB"],["乘車處","https://www.kate.co.jp/tcn/kix_busstop/#terminal1"]],
+  map:gm("関西国際空港 第1ターミナル","りんくうプレミアム・アウトレット"),
+  warn:"落地到 11:30 只有 50 分鐘，入境來不及就搭 12:45。行李可先寄放在機場置物櫃。"},
+ {s:"stop",n:"臨空城 Outlet"},
+ {s:"leg",m:"bus",r:"臨空城 → 關西機場",via:"機場直達巴士",meta:[["票價","¥300"],["車程","15 分"]],
+  links:[["時刻表","https://www.kate.co.jp/tcn/timetable/detail/SKYB"]],map:gm("りんくうプレミアム・アウトレット","関西空港駅")},
+ {s:"todo",k:"d1-haruka",hl:1,tx:"HARUKA（Klook 已購）當天先畫位，產生 QR code",sub:"進站掃 QR code 時不會啟動交通 IC 卡，不要和 IC 卡混用。"},
+ {s:"leg",m:"rail",r:"關西機場 → 京都",via:"JR 關西機場特快 HARUKA",meta:[["票價","¥2,200（已購）"],["車程","約 80 分"]],map:gm("関西空港駅","京都駅")},
+ {s:"stop",n:"京都車站"},
+ {s:"leg",m:"walk",r:"京都車站 → 永旺夢樂城京都",via:"八條口（南側）出站",meta:[["步行","約 5–10 分"]],map:gm("京都駅 八条口","イオンモールKYOTO","walking")},
+ {s:"stop",n:"永旺夢樂城京都",sub:"無印良品、WORKMAN、晚餐",links:[["參考","https://osaka.letsgojp.com/archives/628592/"]]},
+ {s:"todo",k:"d1-muji",hl:1,tx:"無印 9 折最後一天，結帳出示 LINE 會員卡"},
+ {s:"leg",m:"walk",r:"永旺 → 心RESI",meta:[["步行","約 10–15 分"]],map:gm("イオンモールKYOTO",H.kyoto.q,"walking"),warn:"行李多可搭計程車，約 ¥800–1,000。"},
+ {s:"stop",n:"心RESI 入住"},
+ {s:"todo",k:"d1-deposit",hl:1,tx:"付押金時，詢問 11/6 一早退房的押金怎麼退",sub:"11/6 08:15 前就要出門，確認櫃台時間或退款方式。"}
+]},
+{id:"d2",date:"2026-11-04",md:"11/4",wd:"三",title:"清水寺、祇園、錦市場",hotel:"kyoto",items:[
+ {s:"stop",n:"心RESI"},
+ {s:"leg",m:"bus",r:"烏丸七条 → 清水道",via:"京都市巴士 206 系統，往北大路巴士總站（東山通經由）",meta:[["票價","¥230"],["車程","13 分起"]],
+  map:gm(H.kyoto.q,"清水寺"),warn:"紅葉季 206 很擠又塞車，可能要 25–40 分。人太多可改搭計程車（2–4 人約 ¥1,500–2,000）。"},
+ {s:"stop",n:"清水寺"},
+ {s:"leg",m:"walk",r:"清水寺 → 錦市場",via:"一路散步，約 4–5 公里",map:gm("清水寺","錦市場","walking",["三年坂","二年坂","法観寺","高台寺","八坂神社","花見小路通"]),
+  warn:"錦市場多數店家 17:00–18:00 就收，建議 16:00 前到。"},
+ {s:"stop",n:"三年坂、二年坂",cls:"minor"},{s:"stop",n:"法觀寺（八坂之塔）",cls:"minor"},{s:"stop",n:"高台寺",cls:"minor"},
+ {s:"stop",n:"八坂神社",cls:"minor"},{s:"stop",n:"祇園、花見小路",cls:"minor"},{s:"stop",n:"鴨川",cls:"minor"},
+ {s:"stop",n:"錦市場"},
+ {s:"stop",n:"晚餐：麵屋豬一",sub:"熱門店，預留排隊時間",map:gq("麺屋 猪一 京都")},
+ {s:"leg",m:"rail",r:"四條 → 住宿",via:"地下鐵烏丸線，再步行",meta:[["票價","約 ¥220"],["車程","約 15 分"]],map:gm("麺屋 猪一 京都",H.kyoto.q)},
+ {s:"stop",n:"心RESI"}
+]},
+{id:"d3",date:"2026-11-05",md:"11/5",wd:"四",title:"宇治",hotel:"kyoto",items:[
+ {s:"stop",n:"心RESI"},
+ {s:"leg",m:"rail",r:"心RESI → 中村藤吉本店",steps:["步行到京都車站","JR 奈良線 京都 → 宇治（搭快速約 17 分，普通約 30 分）","宇治站出站步行約 2 分"],meta:[["票價","約 ¥240"],["全程","約 35 分"]],map:gm(H.kyoto.q,"中村藤吉本店")},
+ {s:"stop",n:"中村藤吉本店"},
+ {s:"stop",n:"HOHO",cls:"minor"},
+ {s:"stop",n:"伊藤久右衛門",cls:"minor",sub:"本店離宇治站步行約 10–15 分；平等院店在參道上",map:gq("伊藤久右衛門 宇治")},
+ {s:"stop",n:"午餐",cls:"minor"},
+ {s:"leg",m:"taxi",r:"宇治 → 丸久小山園",via:"兩地沒有直達電車",meta:[["計程車","約 10–15 分，¥1,500–2,000"]],map:gm("伊藤久右衛門 本店","丸久小山園 本店","driving"),
+  warn:"也可搭京阪巴士，班次請看站牌或按地圖查詢。先確認丸久小山園當天有營業。"},
+ {s:"stop",n:"株式會社丸久小山園"},
+ {s:"leg",m:"rail",r:"丸久小山園 → 心RESI",steps:["步行到近鐵小倉站","近鐵京都線 小倉 → 京都（急行約 20 分）","步行回住宿"],meta:[["票價","約 ¥400 內"],["全程","約 40 分"]],map:gm("丸久小山園 本店",H.kyoto.q)},
+ {s:"stop",n:"晚餐",cls:"minor"},
+ {s:"stop",n:"心RESI"}
+]},
+{id:"d4",date:"2026-11-06",md:"11/6",wd:"五",title:"天橋立、伊根舟屋一日遊",hotel:"bay",links:[["KKday 行程","https://www.kkday.com/zh-tw/product/770690"],["集合點圖片","https://img.kkday.com/image/get/s1.kkday.com/product_770690/20260907070200_2uW2W/png"]],items:[
+ {s:"stop",n:"心RESI 退房，帶行李出發",sub:"已與 KKday 確認行李可上車"},
+ {s:"todo",k:"d4-refund",hl:1,tx:"退房時確認押金退款"},
+ {s:"leg",m:"walk",r:"住宿 → 京都站八條口觀光巴士站",meta:[["距離","950 公尺"],["步行","14 分"]],map:gm(H.kyoto.q,"京都駅八条口","walking"),warn:"帶行李走得較慢，08:10 前出門。"},
+ {s:"stop",t:"08:30",n:"集合",sub:"08:45 出發"},
+ {s:"stop",n:"伊根町、伊根灣舟屋群展望台、伊根灣觀光船",cls:"minor"},
+ {s:"stop",n:"天橋高架、天橋立 View Land",cls:"minor"},
+ {s:"stop",n:"智恩寺（貓貓籤詩）",cls:"minor"},
+ {s:"stop",t:"20:30",n:"大阪解散（日本橋）"},
+ {s:"leg",m:"rail",r:"日本橋 → 弁天町",steps:["堺筋線 日本橋 → 堺筋本町","轉中央線 → 弁天町，出站即到飯店"],meta:[["票價","¥240"],["車程","24 分"]],map:gm("日本橋駅 大阪",H.bay.q)},
+ {s:"stop",n:"ART 大阪灣飯店 入住"},
+ {s:"todo",k:"d4-shuttle",hl:1,tx:"在前台領取明天去環球影城的接駁車票"}
+]},
+{id:"d5",date:"2026-11-07",md:"11/7",wd:"六",title:"環球影城",hotel:"bay",links:[["飯店接駁時刻表","https://mystays-upload-prod.s3.ap-northeast-1.amazonaws.com/shuttlebus_information_2608_2701_c1f3a0b267.pdf"]],items:[
+ {s:"stop",n:"ART 大阪灣飯店"},
+ {s:"leg",m:"bus",r:"飯店 → 環球影城",via:"飯店接駁車，帶昨天領的票",meta:[["班次","06:30、07:30"]],warn:"開園時間依日期變動，出發前一週再查官網。"},
+ {s:"stop",t:"08:00",n:"開園"},
+ {s:"todo",k:"d5-ticket",hl:1,tx:"一入園立刻用 USJ 官方 APP 抽整理券",sub:"惡靈古堡：安魂曲 THE DIVE、恐懼工廠。要入園後才能抽，先在飯店登入好 APP、綁好門票。"},
+ {s:"stop",n:"惡靈古堡：安魂曲 THE DIVE",cls:"minor",sub:"整理券"},
+ {s:"stop",n:"恐懼工廠",cls:"minor",sub:"整理券"},
+ {s:"stop",t:"18:00",n:"街頭殭屍出沒",sub:"萬聖節活動歷年多在 11 月初結束，請確認 11/7 是否還有"},
+ {s:"leg",m:"rail",r:"環球城 → 西九條 → 弁天町",via:"JR 夢咲線轉大阪環狀線（西九條到弁天町只有一站）",meta:[["票價","約 ¥180–200"],["車程","13 分"]],map:gm("ユニバーサルシティ駅",H.bay.q)},
+ {s:"stop",n:"ART 大阪灣飯店"}
+]},
+{id:"d6",date:"2026-11-08",md:"11/8",wd:"日",title:"神戶，晚上梅田",hotel:"honmachi",items:[
+ {s:"stop",n:"ART 大阪灣飯店 退房"},
+ {s:"leg",m:"rail",r:"弁天町 → 東急 Stay",via:"中央線，在本町或堺筋本町下車（看哪站離飯店近）",meta:[["票價","¥240"],["車程","約 10–15 分"]],map:gm(H.bay.q,H.honmachi.q)},
+ {s:"stop",n:"東急 Stay 寄放行李"},
+ {s:"leg",m:"rail",r:"本町 → 新神戶",steps:["御堂筋線 本町 → 梅田（¥240）","阪急神戶線 大阪梅田 → 神戶三宮，特急約 27 分（¥330）","神戶市營地下鐵 三宮 → 新神戶，一站（¥210）"],meta:[["票價","約 ¥780"],["全程","約 55–60 分"]],map:gm(H.honmachi.q,"新神戸駅")},
+ {s:"leg",m:"walk",r:"新神戶 → 布引纜車山麓站",meta:[["步行","約 5 分"]],map:gm("新神戸駅","神戸布引ロープウェイ ハーブ園山麓駅","walking")},
+ {s:"todo",k:"d6-pass",hl:1,tx:"香草園門票＋纜車用「關西周遊券（可選 3）」",sub:"先確認兌換方式（現場出示 QR 或需先兌換）。"},
+ {s:"stop",n:"布引香草園",sub:"纜車約 10 分；可上山搭纜車、下山走布引瀑布步道"},
+ {s:"leg",m:"walk",r:"新神戶 → 北野 → 生田神社",via:"一路往下走到三宮，約 30 分",map:gm("新神戸駅","生田神社","walking",["北野天満神社 神戸"])},
+ {s:"stop",n:"午餐：神戶牛",cls:"minor"},
+ {s:"stop",n:"點心：布丁、六甲牧場冰淇淋",cls:"minor"},
+ {s:"stop",n:"北野天滿神社",cls:"minor"},
+ {s:"stop",n:"生田神社"},
+ {s:"leg",m:"rail",r:"神戶三宮 → 大阪梅田",via:"阪急神戶線特急，終點就是梅田",meta:[["票價","¥330"],["車程","約 30 分"]],map:gm("神戸三宮駅 阪急","大阪梅田駅 阪急")},
+ {s:"stop",n:"晚上：梅田",sub:"晚餐、逛街"},
+ {s:"leg",m:"rail",r:"梅田 → 本町",via:"御堂筋線，3 站",meta:[["票價","¥240"],["車程","約 8 分"]],map:gm("梅田駅 御堂筋線",H.honmachi.q)},
+ {s:"stop",n:"東急 Stay 入住"}
+]},
+{id:"d7",date:"2026-11-09",md:"11/9",wd:"一",title:"勝尾寺，晚上難波",hotel:"honmachi",links:[["勝尾寺參考","https://osaka.letsgojp.com/archives/764264/"]],items:[
+ {s:"stop",n:"本町站"},
+ {s:"leg",m:"rail",r:"本町 → 箕面萱野",via:"御堂筋線（直通北大阪急行），搭終點「箕面萱野」的車",meta:[["票價","約 ¥530"],["車程","約 35–40 分"]],map:gm("本町駅 大阪","箕面萱野駅"),warn:"部分班次只到千里中央或新大阪，上車前看終點站。"},
+ {s:"stop",n:"箕面萱野站",sub:"以下交通二選一"},
+ {s:"leg",m:"bus",r:"方案一：公車 → 勝尾寺",via:"阪急巴士，⑥ 乘車處",meta:[["票價","¥800"],["車程","23 分"]],map:gm("箕面萱野駅","勝尾寺"),warn:"勝尾寺 8 點開，但公車 9 點才有班次，約 1 小時 1 班。"},
+ {s:"leg",m:"taxi",r:"方案二：計程車 → 勝尾寺",via:"巴士乘車處對面",meta:[["票價","約 ¥3,600"],["車程","23 分"]],map:gm("箕面萱野駅","勝尾寺","driving")},
+ {s:"stop",n:"勝尾寺",sub:"入山 ¥500；平日約 08:00–17:00"},
+ {s:"stop",n:"山門與淨化之橋、智慧之環、勝利達摩奉納棚",cls:"minor"},
+ {s:"stop",n:"三寶荒神堂、本堂、紀念品商店",cls:"minor"},
+ {s:"stop",n:"點心：達摩燒",cls:"minor"},
+ {s:"todo",k:"d7-bus",tx:"到勝尾寺先拍回程公車時刻表",sub:"末班車偏早；山上不易攔計程車，可用 GO 等叫車 App。"},
+ {s:"leg",m:"bus",r:"勝尾寺 → 箕面萱野",via:"公車或計程車",map:gm("勝尾寺","箕面萱野駅")},
+ {s:"leg",m:"rail",r:"箕面萱野 → 難波",via:"御堂筋線直達，不用轉車",meta:[["票價","約 ¥500–600"],["車程","約 45 分"]],map:gm("箕面萱野駅","なんば駅 御堂筋線")},
+ {s:"stop",n:"晚上：難波",sub:"晚餐、道頓堀"},
+ {s:"leg",m:"walk",r:"難波 → 本町，沿御堂筋走回飯店",via:"順路看「大阪・光之饗宴」御堂筋燈飾",meta:[["步行","約 2 公里，30 分"]],map:gm("なんば駅",H.honmachi.q,"walking"),warn:"燈飾歷年多在 11 月初開始點燈，請確認 2026 年日期。累了可搭御堂筋線 2 站回本町（¥240）。"},
+ {s:"stop",n:"東急 Stay"}
+]},
+{id:"d8",date:"2026-11-10",md:"11/10",wd:"二",title:"大鳥大社、心齋橋",hotel:"honmachi",items:[
+ {s:"stop",n:"本町站"},
+ {s:"leg",m:"rail",r:"本町 → 大鳥大社",steps:["御堂筋線 本町 → 天王寺（約 10 分）","JR 阪和線 天王寺 → 鳳（區間快速約 20 分）","鳳站步行約 8 分"],meta:[["票價","約 ¥540"],["全程","約 45 分"]],map:gm(H.honmachi.q,"大鳥大社")},
+ {s:"stop",n:"大鳥大社",sub:"求財。酉之市推算在 11/7、11/19，今天沒有市集"},
+ {s:"leg",m:"rail",r:"鳳 → 難波",via:"JR 阪和線到天王寺，轉御堂筋線",meta:[["票價","約 ¥540"],["車程","約 40 分"]],map:gm("大鳥大社","なんば駅 御堂筋線")},
+ {s:"leg",m:"walk",r:"難波 → 美國村 → 心齋橋 → 本町",via:"由南往北逛，最後走回飯店",meta:[["步行","約 2.5 公里"]],map:gm("なんば駅",H.honmachi.q,"walking",["アメリカ村","心斎橋筋商店街"]),warn:"昨晚已逛過道頓堀，今天可把時間留給美國村和心齋橋。"},
+ {s:"stop",n:"難波、美國村",cls:"minor"},
+ {s:"stop",n:"心齋橋",cls:"minor"},
+ {s:"stop",n:"東急 Stay"}
+]},
+{id:"d9",date:"2026-11-11",md:"11/11",wd:"三",title:"回國",hotel:null,items:[
+ {s:"stop",n:"東急 Stay 退房",sub:"約 06:45 前出門"},
+ {s:"leg",m:"rail",r:"堺筋本町 → 天下茶屋 → 關西機場",steps:["堺筋線 堺筋本町 → 天下茶屋（終點）","南海線「空港急行」→ 關西機場，不用加價"],meta:[["票價","¥1,210"],["全程","約 1 小時 5 分"]],map:gm(H.honmachi.q,"関西空港駅"),
+  warn:"平日早上通勤尖峰，帶行李會擠。搭 rapi:t 要另買特急券（約 ¥520）。"},
+ {s:"stop",t:"08:00",n:"抵達機場，辦退稅"},
+ {s:"todo",k:"d9-tax",hl:1,tx:"退稅：2026/11/1 起改為出境時退稅",sub:"購物時先付含稅價，出境時海關確認商品帶出後才退。退稅商品保持未使用、方便拿出來。"},
+ {s:"stop",t:"09:00",n:"報到、託運行李"},
+ {s:"todo",k:"d9-jcb",tx:"帶 JCB 卡進機場休息室"},
+ {s:"stop",t:"11:30",n:"關西機場起飛"},
+ {s:"leg",m:"air",r:"關西機場 → 高雄"},
+ {s:"stop",t:"14:00",n:"抵達高雄"}
+]}
+];
+
+var store={get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},set:function(k,v){try{localStorage.setItem(k,v);}catch(e){}}};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+
+function hotelCard(key,label){
+  var h=H[key]; if(!h) return "";
+  var addr=h.addr?'<div class="addr">'+esc(h.addr)+'</div>':'<div class="addr missing">地址待補，先用地圖搜尋飯店名稱</div>';
+  return '<div class="hotel"><div class="lbl">'+(label||"今晚住宿")+(h.nights&&label?'　<span class="nights">'+h.nights+'</span>':'')+'</div><div class="name">'+esc(h.name)+'</div>'+addr+
+    '<div class="btns"><a class="btn primary" href="'+gq(h.q)+'" target="_blank" rel="noopener">地圖</a>'+
+    (h.addr?'<button class="btn" data-copy="'+esc(h.jp||h.addr)+'">複製地址</button>':'')+'</div></div>';
+}
+
+function renderDay(d){
+  var i=DAYS.indexOf(d), html='<div class="day-head"><div class="date">'+d.md+'（'+d.wd+'）Day '+(i+1)+'</div><h2>'+esc(d.title)+'</h2>';
+  if(d.links) html+='<div class="links">'+d.links.map(function(l){return '<a href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>';}).join("")+'</div>';
+  html+='</div>'+(d.hotel?hotelCard(d.hotel):'')+'<ol class="line">';
+  d.items.forEach(function(it){
+    if(it.s==="stop"){
+      html+='<li class="stop '+(it.cls||"")+'">'+(it.t?'<span class="t">'+it.t+'</span>':'')+'<span class="n">'+esc(it.n)+'</span>'+(it.sub?'<span class="sub">'+esc(it.sub)+'</span>':'');
+      var lk=[]; if(it.map) lk.push('<a href="'+it.map+'" target="_blank" rel="noopener">地圖</a>');
+      if(it.links) it.links.forEach(function(l){lk.push('<a href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>');});
+      if(lk.length) html+='<span class="sub">'+lk.join("　")+'</span>';
+      html+='</li>';
+    } else if(it.s==="leg"){
+      var m=MODES[it.m];
+      html+='<li class="leg '+it.m+'" style="--m:var('+m[1]+')"><div class="leg-card"><span class="mode">'+m[0]+'</span><div class="leg-route">'+esc(it.r)+'</div>';
+      if(it.via) html+='<div class="leg-via">'+esc(it.via)+'</div>';
+      if(it.steps) html+='<ol class="steps">'+it.steps.map(function(s){return '<li>'+esc(s)+'</li>';}).join("")+'</ol>';
+      if(it.meta) html+='<div class="leg-meta">'+it.meta.map(function(x){return '<span>'+x[0]+' <b>'+esc(x[1])+'</b></span>';}).join("")+'</div>';
+      if(it.warn) html+='<p class="warn">'+esc(it.warn)+'</p>';
+      var b=[]; if(it.map) b.push('<a class="btn primary" href="'+it.map+'" target="_blank" rel="noopener">Google 地圖導航</a>');
+      if(it.links) it.links.forEach(function(l){b.push('<a class="btn" href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>');});
+      if(b.length) html+='<div class="btns">'+b.join("")+'</div>';
+      html+='</div></li>';
+    } else if(it.s==="todo"){
+      var on=store.get("chk:"+it.k)==="1";
+      html+='<li class="todo"><label class="check'+(it.hl?' hl':'')+'"><input type="checkbox" data-k="'+it.k+'"'+(on?' checked':'')+'><span>'+esc(it.tx)+(it.sub?'<em>'+esc(it.sub)+'</em>':'')+'</span></label></li>';
+    }
+  });
+  html+='</ol>';
+  html+='<div class="pager">'+(i>0?'<a class="btn" href="#'+DAYS[i-1].id+'">上一天 '+DAYS[i-1].md+'</a>':'<span></span>')+
+        (i<DAYS.length-1?'<a class="btn" href="#'+DAYS[i+1].id+'">下一天 '+DAYS[i+1].md+'</a>':'<a class="btn" href="#stay">住宿總覽</a>')+'</div>';
+  return html;
+}
+function renderStay(){
+  return '<div class="day-head"><div class="date">三間住宿</div><h2>住宿總覽</h2></div><div class="stay-list">'+
+    hotelCard("kyoto","京都")+hotelCard("bay","大阪灣")+hotelCard("honmachi","大阪本町")+'</div>';
+}
+
+function todayId(){
+  var now=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  for(var i=0;i<DAYS.length;i++) if(DAYS[i].date===now) return DAYS[i].id;
+  return null;
+}
+var TODAY=todayId();
+function renderTabs(cur){
+  var t=DAYS.map(function(d,i){return '<a href="#'+d.id+'"'+(d.id===cur?' aria-current="page"':'')+(d.id===TODAY?' class="is-today"':'')+'><b>D'+(i+1)+'</b><small>'+d.md+'</small></a>';}).join("");
+  t+='<a href="#stay"'+(cur==="stay"?' aria-current="page"':'')+'><b>住宿</b><small>地址</small></a>';
+  var tabs=document.getElementById("tabs"); tabs.innerHTML=t;
+  var a=tabs.querySelector('[aria-current]'); if(a) a.scrollIntoView({block:"nearest",inline:"center"});
+}
+function show(){
+  var h=location.hash.replace("#",""), view=document.getElementById("view");
+  var d=DAYS.filter(function(x){return x.id===h;})[0];
+  if(h==="stay"){view.innerHTML=renderStay();}
+  else{ if(!d){d=DAYS.filter(function(x){return x.id===TODAY;})[0]||DAYS[0];} h=d.id; view.innerHTML=renderDay(d); }
+  renderTabs(h); window.scrollTo(0,0);
+}
+document.getElementById("todayLbl").textContent=TODAY?"今天是 "+DAYS.filter(function(x){return x.id===TODAY;})[0].md:"11/3–11/11";
+document.addEventListener("change",function(e){var k=e.target.getAttribute&&e.target.getAttribute("data-k"); if(k) store.set("chk:"+k,e.target.checked?"1":"0");});
+function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},1600);}
+document.addEventListener("click",function(e){
+  var b=e.target.closest&&e.target.closest("[data-copy]"); if(!b) return;
+  var v=b.getAttribute("data-copy");
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(v).then(function(){toast("已複製地址");},function(){toast(v);});}
+  else toast(v);
+});
+window.addEventListener("hashchange",show);
+show();
+</script>
+</body>
+</html>
